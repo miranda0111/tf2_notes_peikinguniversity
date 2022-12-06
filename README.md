@@ -34,7 +34,8 @@ fashion = tf.keras.datasets.fashion_mnist
 x_train, x_test = x_train / 255.0, x_test / 255.0 #归一化
 
 ```
-#### 导入sklearn的数据集：(注意import)`from sklearn import datasets`
+#### 导入sklearn的数据集：
+(注意import)`from sklearn import datasets`
 ```
 x_train = datasets.load_iris().data
 y_train = datasets.load_iris().target
@@ -279,8 +280,48 @@ file.close()
 ```
 ### model.summary
 
+# 经典卷积神经网络
 
+## ResNet18  5P46
+特征图对应元素相加（矩阵叠加）
+图中共有 4 个 block_list，一共 8 个 ResNet18 块，每一个 ResNet18 块有两层卷积，一共 18 层网络。
+![](https://raw.githubusercontent.com/miranda0111/tf2_notes_peikinguniversity/master/assets/ResNet18_0.png)
+```
+class ResNet18(Model):
+                    #block_list 值由 model = ResNet18([2, 2, 2, 2])传入
+    def __init__(self, block_list, initial_filters=64):  # block_list表示每个block有几个卷积层
+        super(ResNet18, self).__init__()
+        self.num_blocks = len(block_list)  # 共有几个block
+        self.block_list = block_list
+        self.out_filters = initial_filters
+        self.c1 = Conv2D(self.out_filters, (3, 3), strides=1, padding='same', use_bias=False)
+        self.b1 = BatchNormalization()
+        self.a1 = Activation('relu')
+ 「———  self.blocks = tf.keras.models.Sequential()
+ ｜      # 构建ResNet网络结构
+ ｜      for block_id in range(len(block_list)):  # 第几个resnet block
+ ｜          for layer_id in range(block_list[block_id]):  # 第几个卷积层
+ ｜
+ ｜              if block_id != 0 and layer_id == 0:  # 对除第一个block以外的每个block的输入进行下采样
+ ｜                  block = ResnetBlock(self.out_filters, strides=2, residual_path=True)
+ ｜              else:
+ ｜                 block = ResnetBlock(self.out_filters, residual_path=False)
+  ﹂------------ self.blocks.add(block)  # 将构建好的block加入resnet
+            self.out_filters *= 2  # 下一个block的卷积核数是上一个block的2倍
+        self.p1 = tf.keras.layers.GlobalAveragePooling2D()
+        self.f1 = tf.keras.layers.Dense(10, activation='softmax', kernel_regularizer=tf.keras.regularizers.l2())
 
+    def call(self, inputs):
+        x = self.c1(inputs)
+        x = self.b1(x)
+        x = self.a1(x)
+        x = self.blocks(x)
+        x = self.p1(x)
+        y = self.f1(x)
+        return y
+
+model = ResNet18([2, 2, 2, 2])
+```
 
 
 # 函数
