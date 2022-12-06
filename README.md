@@ -76,6 +76,7 @@ test_txt = './mnist_image_label/mnist_test_jpg_10000.txt'
 x_test_savepath = './mnist_image_label/mnist_x_test.npy'
 y_test_savepath = './mnist_image_label/mnist_y_test.npy'
 
+#
 def generateds(path, txt):
     f = open(txt, 'r')  # 以只读形式打开txt文件
     contents = f.readlines()  # 读取文件中所有行
@@ -95,9 +96,139 @@ def generateds(path, txt):
     y_ = np.array(y_)  # 变为np.array格式
     y_ = y_.astype(np.int64)  # 变为64位整型
     return x, y_  # 返回输入特征x，返回标签y_
+
+#判定是否存在npy文件
+if os.path.exists(x_train_savepath) and os.path.exists(y_train_savepath) and os.path.exists(x_test_savepath) and os.path.exists(y_test_savepath):
+    print('-------------Load Datasets-----------------')
+    x_train_save = np.load(x_train_savepath)
+    y_train = np.load(y_train_savepath)
+    x_test_save = np.load(x_test_savepath)
+    y_test = np.load(y_test_savepath)
+    x_train = np.reshape(x_train_save, (len(x_train_save), 28, 28))#三维数组，数量，行，列 60000个
+    x_test = np.reshape(x_test_save, (len(x_test_save), 28, 28))
+else:
+    print('-------------Generate Datasets-----------------')
+    x_train, y_train = generateds(train_path, train_txt)
+    x_test, y_test = generateds(test_path, test_txt)
+
+    print('-------------Save Datasets-----------------')
+    x_train_save = np.reshape(x_train, (len(x_train), -1))#60000个(x_train为用于reshape)，(len(x_train),-1)铺成一个行向量[1 1 1 1 1  1 1 1  1 1 ]
+    x_test_save = np.reshape(x_test, (len(x_test), -1))
+    np.save(x_train_savepath, x_train_save)
+    np.save(y_train_savepath, y_train)
+    np.save(x_test_savepath, x_test_save)
+    np.save(y_test_savepath, y_test)
 ``` 
 
 ### model
+
+- 拉直层：`tf.keras.layers.Flatten(data_format=None)`
+- 全连接层：
+    ```
+    tf.keras.layers.Dense(
+        units, #神经元个数
+        activation=None, 
+        use_bias=True,
+        kernel_initializer="glorot_uniform", 
+        bias_initializer="zeros", #哪种正则化
+        kernel_regularizer=None,
+        bias_regularizer=None,
+        activity_regularizer=None,
+        kernel_constraint=None,
+        bias_constraint=None,
+    ) 
+    ```
+- 卷积层：
+    ```
+    tf.keras.layers.Conv2D(
+        filters, #卷积核个数
+        kernel_size, #卷积核尺寸
+        strides=(1, 1), 卷积步长
+        padding="valid", #one of "valid" or "same"
+        data_format=None,
+        dilation_rate=(1, 1),
+        groups=1,
+        activation=None,
+        use_bias=True,
+        kernel_initializer="glorot_uniform",
+        bias_initializer="zeros",
+        kernel_regularizer=None,
+        bias_regularizer=None,
+        activity_regularizer=None,
+        kernel_constraint=None,
+        bias_constraint=None,
+    )
+    ```
+- LSTM层
+
+#### 激活函数
+[layer-activation-functions文档详情](https://keras.io/api/layers/activations/#layer-activation-functions)
+- relu function
+`tf.keras.activations.relu(x, alpha=0.0, max_value=None, threshold=0.0)`
+使用默认值，这将返回标准 ReLU 激活：max(x, 0)、元素方面的最大值 0 和输入张量 x 。
+- sigmoid function
+`tf.keras.activations.sigmoid(x)` 
+sigmoid(x) = 1 / (1 + exp(-x)) sigmoid 函数总是返回 0 到 1 之间的值。
+- softmax function
+`tf.keras.activations.softmax(x, axis=-1)`Softmax 将值向量转换为概率分布。
+输出向量的元素在 (0, 1) 范围内并且总和为 1。
+每个向量都是独立处理的。  axis 参数设置应用函数的输入轴。
+Softmax 通常用作分类网络最后一层的激活，因为结果可以解释为概率分布。
+每个向量 x 的 softmax 计算为 exp(x) / tf.reduce_sum(exp(x))。
+输入值是结果概率的对数比值。
+
+#### 利用Sequential 逐层描述网络
+```
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+```
+#### 利用class类 搭建带有跳连的非顺序网络结构
+```
+#模板
+class MyModel(Model):#表述继承了tensorflow的Model类
+    def __init__(self):
+        super(MyModel, self).__init__()
+        self.d1 = Dense(3)
+
+    def call(self, x):
+        y = self.d1(x)
+        return y
+model = MyModel()
+```
+```
+#5P27
+class Baseline(Model):
+    def __init__(self):
+        super(Baseline, self).__init__()
+        self.c1 = Conv2D(filters=6, kernel_size=(5, 5), padding='same')  # 卷积层
+        self.b1 = BatchNormalization()  # BN层
+        self.a1 = Activation('relu')  # 激活层
+        self.p1 = MaxPool2D(pool_size=(2, 2), strides=2, padding='same')  # 池化层
+        self.d1 = Dropout(0.2)  # dropout层
+
+        self.flatten = Flatten()
+        self.f1 = Dense(128, activation='relu')
+        self.d2 = Dropout(0.2)
+        self.f2 = Dense(10, activation='softmax')
+
+    def call(self, x):
+        x = self.c1(x)
+        x = self.b1(x)
+        x = self.a1(x)
+        x = self.p1(x)
+        x = self.d1(x)
+
+        x = self.flatten(x)
+        x = self.f1(x)
+        x = self.d2(x)
+        y = self.f2(x)
+        return y
+
+model = Baseline()
+```
 
 ### model.compile
 
