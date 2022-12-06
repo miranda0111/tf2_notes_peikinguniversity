@@ -332,6 +332,7 @@ file.close()
 ## ResNet18  5P46
 特征图对应元素相加（矩阵叠加）
 图中共有 4 个 block_list，一共 8 个 ResNet18 块，每一个 ResNet18 块有两层卷积，一共 18 层网络。
+
 ![](https://raw.githubusercontent.com/miranda0111/tf2_notes_peikinguniversity/master/assets/ResNet18_0.png)
 ```
 class ResNet18(Model):
