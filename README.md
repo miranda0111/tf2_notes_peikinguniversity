@@ -17,8 +17,8 @@ https://gitee.com/jlfff/tf_studynotes_2/releases/v.001
 `
 tf.concat(values, axis, name='concat')
 `
-其他： `tf.tile, tf.stack, tf.repeat.`
-例子：
+ - 其他： `tf.tile, tf.stack, tf.repeat.`
+ - 例子：
 ```
 二维例子：
 $ t1 = [[1, 2, 3], [4, 5, 6]]
@@ -34,7 +34,7 @@ $ tf.concat([t1, t2], 1)
   array([[ 1,  2,  3,  7,  8,  9],
          [ 4,  5,  6, 10, 11, 12]], dtype=int32)>
 ```
-也可以使用-1来表示axis，此时axis值由张量的列（rank）决定，当列为2，axis = -1 等同为 axis = (rank - 1)
+ - 也可以使用-1来表示axis，此时axis值由张量的列（rank）决定，当列为2，axis = -1 等同为 axis = (rank - 1)
 ```
 $ t1 = [[[1, 2], [2, 3]], [[4, 4], [5, 3]]]
 $ t2 = [[[7, 4], [8, 4]], [[2, 10], [15, 11]]]
@@ -45,8 +45,9 @@ $ tf.concat([t1, t2], -1)
            [[ 4,  4,  2, 10],
             [ 5,  3, 15, 11]]], dtype=int32)>
 ```
+ - 事实上大多数为三维数据，在这种情况下，axis=0代表的第一个维度的含义就不再是之前认为的行的概念了。
+ - 现在m1的第一维度的值是5，代表的是batch_size。仍然按照之前的理解，如果设置axis=0, axis=0就是将第一维度进行相加，其余维度不变，因此我们可以得到新的维度为（10,2,3）。
 ```
-事实上大多数为三维数据
 $ m1 = np.random.rand(5,2,3)
 $ m2 = np.random.rand(5,2,3)
 $ tf.concat([m1, m2], axis=0)
