@@ -149,7 +149,7 @@ else:
         dilation_rate=(1, 1),
         groups=1,
         activation=None,
-        use_bias=True,
+        use_bias=True, #使用偏置
         kernel_initializer="glorot_uniform",
         bias_initializer="zeros",
         kernel_regularizer=None,
@@ -189,14 +189,14 @@ model = tf.keras.models.Sequential([
 ```
 #模板
 class MyModel(Model):#表述继承了tensorflow的Model类
-    def __init__(self):
+    def __init__(self, data):
         super(MyModel, self).__init__()
-        self.d1 = Dense(3)
+        self.d1 = Dense(data)
 
     def call(self, x):
         y = self.d1(x)
         return y
-model = MyModel()
+model = MyModel(3) #model传入class类中self，值 3 传入data
 ```
 ```
 #5P27
