@@ -6,6 +6,53 @@ https://www.icourse163.org/learn/PKU-1002536002
 class4自制数据集数据文件
 https://gitee.com/jlfff/tf_studynotes_2/releases/v.001
 
+# tensorflow基础语法
+维数|阶|名字|例子
+--|--|--|-----------------------
+0-D|0|标量scalar|s = 1 
+1-D|1|向量vector|v = [1, 2, 3]，shape=(3,)
+2-D|2|矩阵matrix|m = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+n-D|n|张量tensor|t = [[[
+
+- 数据类型（常用）：`tf.int32` `tf.float32` `tf.float64` `tf.bool` `tf.string`
+- 创建数据：`tf.constant(张量内容, dtype=tf.float32)` `tf.constant([True, False])` `tf.constant("Hello World")` 
+
+- np convert to tf: 
+    ```
+    a = np.arange(0, 5)
+    b = tf.convert_to_tensor(a, dtype=tf.int64)
+    ```
+- zeros, ones, fill: 
+    ```
+    a = tf.zeros([2, 3]) #全为0的张量，[维度]
+    b = tf.ones(4)       #全为1的张量
+    c = tf.fill([2, 2], 9) #全为9的张量
+    ```
+- 正太分布随机函数：`d = tf.random.normal([2,2], mean=0.5, stddev=1)`维度，均值，标准差
+- 截断式正太分布随机数：`e = tf.random.truncated_normal([2, 2], mean=0.5, stddev=1)`
+- 均匀分布随机函数：`f = tf.random.uniform([2, 2], minval=0, maxval=1)`维度，最小值，最大值
+- 强制转换类型：`x2 = tf.cast(tf.constant([1., 2., 3.], dtype=tf.float64), tf.int32)`数据，数据类型
+- 最大/最小值：`tf.reduce_min(x2)` `tf.reduce_max(x2)`
+- 平均值：`tf.reduce_mean(x, axis=0)#axis可选` axis=0代表每个垂直方向rank
+- 总和：`tf.reduce_sum(x, axis=1)` axis=1代表每个横向row
+- 独热码：
+  将数据由小到大排列，
+    ```
+    labels = tf.constant([1, 0, 2])  # 输入的元素值最小为0，最大为2
+    output = tf.one_hot(labels,
+                        depth=3,
+                        on_value=None, #固定最大值，1的位置
+                        off_value=None, #固定最小值，0的位置
+                        axis=None,
+                        dtype=None,
+                        name=None
+            )
+    print("result of labels1:", output)
+    ```
+
+`x_train.shape(50000, 32, 32, 3)#5w个，32行，32列，三（通道）堆叠数据`
+
+
 # 神经网络的八股
 ## 六步法
 ### import 
