@@ -161,7 +161,7 @@ else:
     ```
 - LSTM层
 
-#### 激活函数
+#### 激活函数（非线性元素）
 [layer-activation-functions文档详情](https://keras.io/api/layers/activations/#layer-activation-functions)
 - relu function
 `tf.keras.activations.relu(x, alpha=0.0, max_value=None, threshold=0.0)`
@@ -231,9 +231,43 @@ model = Baseline()
 ```
 
 ### model.compile
-
+配置训练方法（告知用哪种训练器，选择哪个损失函数，选择哪种评测指标）
+```
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
+              metrics=['sparse_categorical_accuracy'])
+```
+- optimizer可选：sgd、adagrad、adadelta、adam
+- loss可选：'mse' or tf.keras.losses.SparseCategoricalCrossentropy稀疏分类交叉熵，False代表数据不经过概率分布，用于配合softmax
+- metrics：
+  name|content
+  ---|---
+  accuracy|y_（标签值）和y（输出）均为数值
+  categorical_accuracu|y_、y均为独热码
+  sparse_categorical_accuracy|y_是数值、y是one-hot
 ### model.fit
+执行训练过程（告知训练集和测试集的输入特征和标签，batch，迭代次数）
+```
+model.fit(x_train, y_train, batch_size=32, epochs=5, #epochs迭代轮数
+          validation_data=(x_test, y_test), #测试集的输入特征和标签
+          validation_split=0.2, #从训练集划分多少比例给测试集
+          validation_freq=1)#多少次epochs测试一次
+```
+#### 断点续训 4P19
+位于model.compile后
+```
+checkpoint_save_path = "./checkpoint/mnist.ckpt"
+if os.path.exists(checkpoint_save_path + '.index'):
+    print('-------------load the model-----------------')
+    model.load_weights(checkpoint_save_path)
 
+cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_save_path,
+                                                 save_weights_only=True,
+                                                 save_best_only=True)
+
+history = model.fit(x_train, y_train, batch_size=32, epochs=5, validation_data=(x_test, y_test), validation_freq=1,
+                    callbacks=[cp_callback])
+```
 ### model.summary
 
 
