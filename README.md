@@ -375,6 +375,34 @@ model = ResNet18([2, 2, 2, 2])
 ![](https://raw.githubusercontent.com/miranda0111/tf2_notes_peikinguniversity/master/assets/%E5%BE%AA%E7%8E%AF%E6%A0%B8_0.png)
 ![](https://raw.githubusercontent.com/miranda0111/tf2_notes_peikinguniversity/master/assets/%E5%BE%AA%E7%8E%AF%E6%A0%B8_1.png)
 
+- 代码
+```
+tf.keras.layers.SimpleRNN(
+    units, #记忆体个数
+    activation="tanh", #不写，默认tanh
+    use_bias=True,
+    kernel_initializer="glorot_uniform",
+    recurrent_initializer="orthogonal",
+    bias_initializer="zeros",
+    kernel_regularizer=None,
+    recurrent_regularizer=None,
+    bias_regularizer=None,
+    activity_regularizer=None,
+    kernel_constraint=None,
+    recurrent_constraint=None,
+    bias_constraint=None,
+    dropout=0.0,
+    recurrent_dropout=0.0,
+    return_sequences=False, #是否每个时刻输出ht到下一层，true各时间步输出ht，false仅最后时间步输出ht
+    return_state=False,
+    go_backwards=False,
+    stateful=False,
+    unroll=False,
+    **kwargs
+)
+```
+
+
 # 函数
 ## tf.concat
 `
