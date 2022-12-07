@@ -403,7 +403,20 @@ tf.keras.layers.SimpleRNN(
     **kwargs
 )
 ```
+return_sequences=True情况
+![](https://raw.githubusercontent.com/miranda0111/tf2_notes_peikinguniversity/master/assets/%E5%BE%AA%E7%8E%AF%E6%A0%B8_2.png)
 
+return_sequences=False情况
+![](https://raw.githubusercontent.com/miranda0111/tf2_notes_peikinguniversity/master/assets/%E5%BE%AA%E7%8E%AF%E6%A0%B8_3.png)
+
+- 入RNN时，x_train维度： [送入样本数, 循环核时间展开数, 每个时间步输入特征个数]
+  ```
+  一个循环核，按时间展开为1
+  [[0.4, 1.7, 0.6],
+   [0.7, 0.9, 1.6]]
+  RNN层期待维度：[2, 1, 3]
+  ```
+  
 
 # 函数
 ## tf.concat
