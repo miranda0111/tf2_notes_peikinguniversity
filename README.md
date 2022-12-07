@@ -370,7 +370,10 @@ class ResNet18(Model):
 
 model = ResNet18([2, 2, 2, 2])
 ```
-
+# 循环核
+- 
+![](https://raw.githubusercontent.com/miranda0111/tf2_notes_peikinguniversity/master/assets/%E5%BE%AA%E7%8E%AF%E6%A0%B8_0.png)
+![](https://raw.githubusercontent.com/miranda0111/tf2_notes_peikinguniversity/master/assets/%E5%BE%AA%E7%8E%AF%E6%A0%B8_1.png)
 
 # 函数
 ## tf.concat
