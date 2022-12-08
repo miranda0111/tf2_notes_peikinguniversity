@@ -54,7 +54,7 @@ history = model.fit(x_train, y_train, batch_size=32, epochs=100, callbacks=[cp_c
 model.summary()
 
 # print(model.trainable_variables)
-file = open('./weights.txt', 'w')  # 参数提取
+file = open('./weights_4pre1.txt', 'w')  # 参数提取
 for v in model.trainable_variables:
     file.write(str(v.name) + '\n')
     file.write(str(v.shape) + '\n')
