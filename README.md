@@ -538,3 +538,26 @@ class InceptionBlk(Model):
         x = tf.concat([x1, x2_2, x3_2, x4_2], axis=3)
         return x
 ```
+
+# Pandas函数说明
+## iloc
+df.iloc[a,b]，其中df是DataFrame数据结构的数据（表1就是df），a是行索引（见表1），b是列索引（见表1）。
+| |姓名（列索引10）|班级（列索引1）|分数（列索引2）|
+|-|-|-|-|
+|row0|小明|302|87|
+|row1|小翠|303|93|
+|row2|小青|304|88|
+
+## loc函数，根据某个数据来提取数据所在的行
+```
+In[10]: data.loc[data['A']==0] #提取data数据(筛选条件: A列中数字为0所在的行数据)
+Out[10]: 
+   A  B  C  D
+a  0  1  2  3
+ 
+In[11]: data.loc[(data['A']==0)&(data['B']==2)] #提取data数据(多个筛选条件)
+Out[11]: 
+   A  B  C  D
+a  0  1  2  3
+
+```
